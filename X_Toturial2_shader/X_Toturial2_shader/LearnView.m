@@ -119,7 +119,7 @@
 }
 
 - (void)render{
-    glClearColor(1.0, 1.0, 0, 1.0);
+    glClearColor(0, 1.0, 0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     CGFloat scale = [[UIScreen mainScreen] scale];
     glViewport(self.frame.origin.x * scale, self.frame.origin.y * scale, self.frame.size.width * scale, self.frame.size.height * scale);//设置窗口大小
@@ -179,10 +179,10 @@
     
     //z轴旋转矩阵
     GLfloat zRotation[16] = {
-        c,s,0,0.2,
+        c,-s,0,0.2,
         s,c,0,0,
-        0,0,1,0,
-        0,0,0,1
+        0,0,1.0,0,
+        0,0,0,1.0
     };
     //设置旋转矩阵
     glUniformMatrix4fv(rotate, 1, GL_FALSE, (GLfloat *)&zRotation[0]);
@@ -225,6 +225,10 @@
 - (GLuint)setupTexture:(NSString *)fileName{
     //1.获取图片的CGImageRef
     CGImageRef spriteImage = [UIImage imageNamed:fileName].CGImage;
+    if (!spriteImage) {
+        NSLog(@"Failed to load image %@", fileName);
+        exit(1);
+    }
     //2.读取图片大小
     size_t width = CGImageGetWidth(spriteImage);
     size_t height = CGImageGetHeight(spriteImage);
