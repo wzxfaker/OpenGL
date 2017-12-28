@@ -116,7 +116,7 @@
 }
 
 - (void)render{
-    glClearColor(0.5, 1.0, 0.85, 1.0);
+    glClearColor(0.5, 0.5, 0.8, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     CGFloat scale = [[UIScreen mainScreen] scale];
     glViewport(self.frame.origin.x*scale, self.frame.origin.y*scale, self.frame.size.width*scale, self.frame.size.height*scale);
@@ -157,9 +157,9 @@
     //后三个是顶点颜色值
     GLfloat attrArr[] =
     {
-        -0.5f, 0.5f, 0.0f,      1.0f, 0.0f, 1.0f, //左上
-        0.5f, 0.5f, 0.0f,       1.0f, 0.0f, 1.0f, //右上
-        -0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f, //左下
+        -0.5f, 0.5f, 0.0f,      0.5f, 0.5f, 1.0f, //左上
+        0.5f, 0.5f, 0.0f,       1.0f, 0.8f, 1.0f, //右上
+        -0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 1.0f, //左下
         0.5f, -0.5f, 0.0f,      1.0f, 1.0f, 1.0f, //右下
         0.0f, 0.0f, 1.0f,      0.0f, 1.0f, 0.0f, //顶点
     };
@@ -167,10 +167,12 @@
     glBufferData(GL_ARRAY_BUFFER, sizeof(attrArr), attrArr, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, _myVertices);
     
+    //获取三个，从第零个开始
     GLuint position = glGetAttribLocation(self.myProgram, "position");
     glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, NULL);
     glEnableVertexAttribArray(position);
     
+    //获取三个，从第三个((float *)NULL + 3)开始
     GLuint positionColor = glGetAttribLocation(self.myProgram, "positionColor");
     glVertexAttribPointer(positionColor, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, (float *)NULL + 3);
     glEnableVertexAttribArray(positionColor);
@@ -199,9 +201,11 @@
     //旋转
     ksRotate(&_rotationMatrix, degree, 1.0, 0.0, 0.0);//绕x轴
     ksRotate(&_rotationMatrix, yDegree, 0.0, 1.0, 0.0);//绕y轴
+    ksRotate(&_rotationMatrix, yDegree, 0.0, 0.0, 1.0);//绕z轴
     //把变换矩阵想乘，注意先后顺序
     ksMatrixMultiply(&_modelViewMatrix, &_rotationMatrix, &_modelViewMatrix);
     glUniformMatrix4fv(modelViewMatrixSlot, 1, GL_FALSE, (GLfloat*)&_modelViewMatrix.m[0][0]);
+//    NSLog(@"🏀--%lu,%lu",sizeof(indices),sizeof(indices[0]));
     glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_INT, indices);
     [self.myContext presentRenderbuffer:GL_RENDERBUFFER];
 }
