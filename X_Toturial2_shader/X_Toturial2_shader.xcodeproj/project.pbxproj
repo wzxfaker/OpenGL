@@ -15,6 +15,8 @@
 		84645F871FF626FD00508D22 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84645F851FF626FD00508D22 /* LaunchScreen.storyboard */; };
 		84645F8F1FF6279500508D22 /* laba@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84645F8E1FF6279500508D22 /* laba@2x.png */; };
 		84645F921FF627C300508D22 /* LearnView.m in Sources */ = {isa = PBXBuildFile; fileRef = 84645F911FF627C300508D22 /* LearnView.m */; };
+		84645F951FF6342100508D22 /* shaderv.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 84645F931FF6342100508D22 /* shaderv.vsh */; };
+		84645F961FF6342100508D22 /* shaderf.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 84645F941FF6342100508D22 /* shaderf.fsh */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +33,8 @@
 		84645F8E1FF6279500508D22 /* laba@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "laba@2x.png"; sourceTree = "<group>"; };
 		84645F901FF627C300508D22 /* LearnView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LearnView.h; sourceTree = "<group>"; };
 		84645F911FF627C300508D22 /* LearnView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LearnView.m; sourceTree = "<group>"; };
+		84645F931FF6342100508D22 /* shaderv.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shaderv.vsh; sourceTree = "<group>"; };
+		84645F941FF6342100508D22 /* shaderf.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shaderf.fsh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +74,8 @@
 				84645F901FF627C300508D22 /* LearnView.h */,
 				84645F911FF627C300508D22 /* LearnView.m */,
 				84645F8E1FF6279500508D22 /* laba@2x.png */,
+				84645F931FF6342100508D22 /* shaderv.vsh */,
+				84645F941FF6342100508D22 /* shaderf.fsh */,
 				84645F801FF626FD00508D22 /* Main.storyboard */,
 				84645F831FF626FD00508D22 /* Assets.xcassets */,
 				84645F851FF626FD00508D22 /* LaunchScreen.storyboard */,
@@ -146,8 +152,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84645F951FF6342100508D22 /* shaderv.vsh in Resources */,
 				84645F8F1FF6279500508D22 /* laba@2x.png in Resources */,
 				84645F871FF626FD00508D22 /* LaunchScreen.storyboard in Resources */,
+				84645F961FF6342100508D22 /* shaderf.fsh in Resources */,
 				84645F841FF626FD00508D22 /* Assets.xcassets in Resources */,
 				84645F821FF626FD00508D22 /* Main.storyboard in Resources */,
 			);
