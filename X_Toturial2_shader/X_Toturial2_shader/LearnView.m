@@ -84,7 +84,7 @@
         NSLog(@"Failed to initialize OpenGLES 2.0 context");
         exit(1);
     }
-    //设置为当前上下文
+    //设置为当前上下文,下边的代码必须写
     if (![EAGLContext setCurrentContext:context]) {
         NSLog(@"Failed to set current OpenGL context");
         exit(1);
@@ -101,25 +101,40 @@
 
 - (void)setupRenderBuffer{
     GLuint buffer;
-    glGenRenderbuffers(1, &buffer);
+    glGenRenderbuffers(1, &buffer);//创建一个渲染缓冲区对象
     self.myColorRenderBuffer = buffer;
-    glBindRenderbuffer(GL_RENDERBUFFER, self.myColorRenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, self.myColorRenderBuffer);//将该渲染缓冲区对象绑定到管线上
     //为颜色缓冲区分配存储空间
     [self.myContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:self.myEagLayer];
 }
 
 - (void)setupFrameBuffer{
     GLuint buffer;
-    glGenFramebuffers(1, &buffer);
-    self.myColorFrameBuffer = buffer;
+    glGenFramebuffers(1, &buffer);//创建一个帧缓冲区对象
+    self.myColorFrameBuffer = buffer;//指定要清除哪些缓冲区，GL_COLOR_BUFFER_BIT表示颜色缓冲区，GL_DEPTH_BUFFER_BIT表示深度缓冲区，GL_STENCIL_BUFFER_BIT表示模板缓冲区
     //设置为当前frameBuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, self.myColorFrameBuffer);
-    //将_colorRenderBuffer 装配到 GL_COLOR_ATTACHMENT0 这个装配点上
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, self.myColorRenderBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, self.myColorFrameBuffer);//将该帧缓冲区对象绑定到管线上
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, self.myColorRenderBuffer);//将创建的渲染缓冲区绑定到帧缓冲区上，并使用颜色填充
 }
-
+/*
+ 着色器就是一段包含着色信息的源代码字符串。通常着色器分为顶点着色器（Vertex Shader）和片元着色器（Fragment Shader），两个着色器分别写在不同的文件中，文件没有固定的后缀名，可以根据你自己的爱好写，但是最好能区别文件中写的是顶点着色器还是片元着色器，不然时间长了自己都不知道哪个文件中写的是什么信息了。如你可以给你的顶点着色器后缀名命名为：vert, ver, v, vsh等，给你的片元着色器后缀名命名为：frag, fra, f, fsh等。
+ 
+ 着色器源代码和OpenGL源代码不是一起编译的，所以要特别强调我刚才说的“着色器是一段包含着色信息的源代码字符串”。所以，OpenGL源代码肯定是和工程一起编译的，但是着色器源代码是在运行期编译的。你可能会问，着色器的源代码是一个字符串怎么编译呢？所以OpenGL ES提供了一套运行期动态编译的流程：
+ 
+ （1）创建着色器：glCreateShader
+ 
+ （2）指定着色器源代码字符串：glShaderSource
+ 
+ （3）编译着色器：glCompileShader
+ 
+ （4）创建着色器可执行程序：glCompileShader
+ 
+ （5）向可执行程序中添加着色器：glAttachShader
+ 
+ （6）链接可执行程序：glLinkProgram
+ */
 - (void)render{
-    glClearColor(0, 1.0, 0, 1.0);
+    glClearColor(0, 1.0, 0, 1.0);//指定填充屏幕的RGBA值
     glClear(GL_COLOR_BUFFER_BIT);
     CGFloat scale = [[UIScreen mainScreen] scale];
     glViewport(self.frame.origin.x * scale, self.frame.origin.y * scale, self.frame.size.width * scale, self.frame.size.height * scale);//设置窗口大小
@@ -131,10 +146,10 @@
     
     //加载shader
     self.myProgram = [self loadShaders:vertFile frag:fragFile];
-    //链接
-    glLinkProgram(self.myProgram);
+    
+    glLinkProgram(self.myProgram);//链接源程序，你可能添加了多个着色器，链接程序
     GLint linkSuccess;
-    glGetProgramiv(self.myProgram, GL_LINK_STATUS, &linkSuccess);
+    glGetProgramiv(self.myProgram, GL_LINK_STATUS, &linkSuccess);//查看链接是否成功
     if (linkSuccess == GL_FALSE) { //连接错误
         GLchar messages[256];
         glGetProgramInfoLog(self.myProgram, sizeof(messages), 0, &messages[0]);
@@ -186,7 +201,7 @@
     };
     //设置旋转矩阵
     glUniformMatrix4fv(rotate, 1, GL_FALSE, (GLfloat *)&zRotation[0]);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArrays(GL_TRIANGLES, 0, 6);//将顶点数组使用三角形渲染，GL_TRIANGLES表示三角形， 0表示数组第一个值的位置，vertexCount表示数组长度
     [self.myContext presentRenderbuffer:GL_RENDERBUFFER];
 }
 
@@ -201,7 +216,7 @@
 
 - (GLuint)loadShaders:(NSString *)vert frag:(NSString *)frag{
     GLuint verShader,fragShader;
-    GLuint program = glCreateProgram();
+    GLuint program = glCreateProgram();//创建一个渲染程序
     //编译
     [self compileShader:&verShader type:GL_VERTEX_SHADER file:vert];
     [self compileShader:&fragShader type:GL_FRAGMENT_SHADER file:frag];
@@ -217,9 +232,9 @@
     //读取字符串
     NSString *content = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
     const GLchar *source = (GLchar *)[content UTF8String];
-    *shader = glCreateShader(type);
-    glShaderSource(*shader, 1, &source, NULL);
-    glCompileShader(*shader);
+    *shader = glCreateShader(type);//根据类型创建一个空着色器，可以是顶点着色器，也可以是片元着色器
+    glShaderSource(*shader, 1, &source, NULL);//source代表要执行的源代码字符串数组，1表示源代码字符串数组的字符串个数是一个，0表示源代码字符串长度数组的个数为0个
+    glCompileShader(*shader);//编译着色器
 }
 
 - (GLuint)setupTexture:(NSString *)fileName{

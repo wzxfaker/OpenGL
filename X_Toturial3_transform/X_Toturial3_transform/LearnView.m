@@ -167,13 +167,16 @@
     glBufferData(GL_ARRAY_BUFFER, sizeof(attrArr), attrArr, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, _myVertices);
     
-    //获取三个，从第零个开始
-    GLuint position = glGetAttribLocation(self.myProgram, "position");
+    //从着色器代码中获取属性信息，
+    GLuint position = glGetAttribLocation(self.myProgram, "position");//从着色器源程序中的顶点着色器中获取Position属性
+    /*
+        为顶点着色器位置信息赋值：position表示顶点着色器位置属性；3表示每一个顶点信息由几个值组成，这个值必须是1，2，3或4；GL_FLOAT表示顶点信息的数据类型；GL_FALSE表示不要将数据类型标准化；6表示数组中每个元素的长度；最后一个参数表示数组的首地址
+     */
     glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, NULL);
     glEnableVertexAttribArray(position);
     
-    //获取三个，从第三个((float *)NULL + 3)开始
-    GLuint positionColor = glGetAttribLocation(self.myProgram, "positionColor");
+    //同上
+    GLuint positionColor = glGetAttribLocation(self.myProgram, "positionColor");//从着色器源程序中的顶点着色器中获取SourceColor属性
     glVertexAttribPointer(positionColor, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, (float *)NULL + 3);
     glEnableVertexAttribArray(positionColor);
     
@@ -206,7 +209,7 @@
     ksMatrixMultiply(&_modelViewMatrix, &_rotationMatrix, &_modelViewMatrix);
     glUniformMatrix4fv(modelViewMatrixSlot, 1, GL_FALSE, (GLfloat*)&_modelViewMatrix.m[0][0]);
 //    NSLog(@"🏀--%lu,%lu",sizeof(indices),sizeof(indices[0]));
-    glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_INT, indices);
+    glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_INT, indices);//渲染顶点
     [self.myContext presentRenderbuffer:GL_RENDERBUFFER];
 }
 
