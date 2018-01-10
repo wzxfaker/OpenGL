@@ -133,9 +133,72 @@
     }
 }
 
+//绘制法向量
+- (void)drawNormals{
+    GLKVector3 normalLineVertices[NUM_LINE_VERTS];
+    SceneTrianglesNormalLinesUpdate(triangles, GLKVector3MakeWithArray(self.baseEffect.light0.position.v), normalLineVertices);
+    [self.extraBuffer reinitWithAttribStride:sizeof(GLKVector3) numberOfVertices:NUM_LINE_VERTS bytes:normalLineVertices
+     ];
+    [self.extraBuffer prepareToDrawWithAttrib:GLKVertexAttribPosition numberOfCoordinates:3 attribOffset:0 shouldEnable:YES
+     ];
+    self.extraEffect.useConstantColor = GL_TRUE;
+    self.extraEffect.constantColor =
+    GLKVector4Make(0.0, 1.0, 0.0, 1.0);
+    
+    [self.extraEffect prepareToDraw];
+    
+    [self.extraBuffer drawArrayWithMode:GL_LINES
+                       startVertexIndex:0
+                       numberOfVertices:NUM_NORMAL_LINE_VERTS];
+    
+    self.extraEffect.constantColor =
+    GLKVector4Make(1.0, 1.0, 0.0, 1.0);
+    
+    [self.extraEffect prepareToDraw];
+    
+    [self.extraBuffer drawArrayWithMode:GL_LINES
+                       startVertexIndex:NUM_NORMAL_LINE_VERTS
+                       numberOfVertices:(NUM_LINE_VERTS - NUM_NORMAL_LINE_VERTS)];
+}
+
+//更新法向量
 - (void)updateNormals{
+    if (self.shouldUseFaceNormals) {
+        SceneTrianglesUpdateFaceNormals(triangles);
+    }else{
+        SceneTrianglesUpdateVertexNormals(triangles);
+    }
+    [self.vertexBuffer reinitWithAttribStride:sizeof(SceneVertex) numberOfVertices:sizeof(triangles)/sizeof(SceneVertex) bytes:triangles];
+}
 
-
+/**
+ *  渲染场景代码
+ */
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect {
+    glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    [self.baseEffect prepareToDraw];
+    
+    [self.vertexBuffer prepareToDrawWithAttrib:GLKVertexAttribPosition
+                           numberOfCoordinates:3
+                                  attribOffset:offsetof(SceneVertex, position)
+                                  shouldEnable:YES];
+    [self.vertexBuffer prepareToDrawWithAttrib:GLKVertexAttribNormal
+                           numberOfCoordinates:3
+                                  attribOffset:offsetof(SceneVertex, normal)
+                                  shouldEnable:YES];
+    
+    
+    [self.vertexBuffer drawArrayWithMode:GL_TRIANGLES
+                        startVertexIndex:0
+                        numberOfVertices:sizeof(triangles) / sizeof(SceneVertex)];
+    
+    if(self.shouldDrawNormals)
+    {
+        [self drawNormals];
+    }
+    
 }
 
 
